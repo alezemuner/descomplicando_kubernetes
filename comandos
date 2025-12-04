@@ -1,0 +1,124 @@
+# IINSTALAÇÃO DAS FERRAMENTAS NECESSÁRIAS
+- docker
+- kubectl
+	curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
+   	chmod +x kubectl
+   	mv kubectl /usr/local/bin
+- kind
+	# For AMD64 / x86_64
+	[ $(uname -m) = x86_64 ] && curl -Lo ./kind https://kind.sigs.k8s.io/dl/v0.30.0/kind-linux-amd64
+	# For ARM64
+	[ $(uname -m) = aarch64 ] && curl -Lo ./kind https://kind.sigs.k8s.io/dl/v0.30.0/kind-linux-arm64
+	chmod +x ./kind
+	sudo mv ./kind /usr/local/bin/kind
+	
+# CRIAR/DELETAR CLUSTER KIND
+
+	kind create cluster
+	kind create cluster --config kind-cluster.yml --name nome-cluster
+	kind delete cluster
+
+-----------------------------------------------------------
+
+	yum install bash-completion
+	#configura o autocomplete na sua sessão atual (antes, certifique-se de ter instalado o pacote bash-completion).
+	source <(kubectl completion bash) 
+	kubectl completion bash > ~/.kube/completion.bash.inc
+	echo "source $HOME/.kube/completion.bash.inc" >> ~/.bash_profile #add autocomplete permanentemente ao seu shell.
+	source /.bash_profile
+
+# ALIAS
+alias k=kubectl #cria um alias para quando digitar k seja kubectl
+nano nano ~/.bash_profile #para deixar permanente
+alias k=kubectl #cria um alias para quando digitar k seja kubectl
+source ~/.bash_profile #atualiza o bash_profile
+
+
+# COMANDOS
+
+kubectl get nodes #lista os nodes
+kubectl get namespaces #lista os namespaces
+kubectl get pods -A #lista todos os pods de todos os namespaces
+kubectl get pods -o wide #retorna mais informações
+kubectl get pods -L nome_label #retorna as labels dos pods
+kubectl get pods -n kube-system #lista os pods no namespace kube-system
+kubectl get pods -n kube-system -o wide #lista os pods no namespace kube-system com mais informações
+kubectl get pods --all-namespaces #lista os pods de todos os namespaces
+kubectl get pods nome-pod -o yaml (yaml) #retorna o pod em formato yaml
+
+kubectl describe pods nome_pod (descreve o pod) #retorna informações detalhadas do pod
+
+kubectl get deploy -A #lista todos os deployments de todos os namespaces
+kubectl get svc -A #lista todos os serviços de todos os namespaces
+kubectl get replicaset -A #lista todos os replicasets de todos os namespaces
+
+# LOG
+kubectl logs -n kube-system kube-proxy-sr2xb #retorna os logs do pod kube-proxy no namespace kube-system
+kubectl logs licao-casa -c wordpress #retorna os logs do container wordpress do pod licao-casa
+
+# RUN
+kubectl run nome_pod --image nginx --port 80 #cria um pod com a imagem nginx e expõe a porta 80
+kubectl delete pod nome_pod #deleta o pod especificado
+
+kubectl expose pods nome_pod #expõe o pod como um serviço
+kubectl expose pods nome_pod --type NodePort #expõe o pod como um serviço do tipo NodePort
+kubectl delete svc nginx #deleta o serviço nginx
+
+kubectl exec -ti nginx -- bash #acessa o pod nginx via bash
+
+# DRY RUN
+
+kubectl run --image nginx --port 80 nginx --dry-run=client -o yaml > pod.yaml #simula a criação do pod e devolve em um yaml
+kubectl apply -f pod.yaml #cria o pod a partir do arquivo yaml
+
+#KUBECTL ATTACH (conecta ao container no pod) e KUBECTL EXEC (executa comandos dentro do pod)
+kubectl run -it girus --image alpine #cria o pod girus com a imagem alpine
+ps -f #lista os processos em execução no pod
+apk add curl #instala o curl
+curl google.com #testa o curl
+
+kubectl attach girus2 -c girus2 -it #entro no pod girus2 no container girus2
+
+
+kubectl exec -it strigus -- bash #entro no pod strigus via bash
+kubectl exec -it girus2 -- apk add curl #instalo o curl no pod girus2
+kubectl exec -it strigus -- cat /usr/share/nginx/html/index.html #visualizo o conteúdo do arquivo index.html
+cd /proc/1/ #entro no diretório do processo 1
+cat cmdline #vejo o comando que iniciou o processo 1
+root@strigus:/usr/share/nginx/html# echo "GIROPOS STRIGUS GIRUS" > index.html #modifico o arquivo index.html
+
+#POD MULTICONTAINER UTILIZANDO MANIFESTO
+kubectl run girus-1 --image alpine --dry-run=client -o yaml > pod.yml #crio o manifesto do pod girus-1
+kubectl apply -f pod.yml #crio o pod girus-1
+kubectl delete -f pod.yml
+k get pods -w #acompanha em tempo real os eventos dos pods
+kubectl describe pod girus #vejo os detalhes do pod girus
+kubectl logs girus #vejo os logs do pod girus
+kubectl logs girus -f #
+kubectl logs girus -c apache #vejo os logs do container apache do pod girus
+
+#LIMITANDO RECURSOS DE PODS CPU E MEMÓRIA
+    resources:
+      limits:
+        cpu: "1.5"
+        memory: "128Mi"
+      requests:
+        cpu: "0.3"
+        memory: "64Mi"
+
+k exec -it girus -- bash
+apt update
+apt install stress
+stress --vm-bytes 64M --vm 1
+stress --cpu 1 --vm 1
+
+#VOLUME EMPITYDIR
+    volumeMounts: #montagem do volume no container
+    - mountPath: /giropops #caminho dentro do container
+      name: primeiro-emptydir #nome do volume
+
+  volumes: #definição do volume no pod
+  - name: primeiro-emptydir #nome do volume
+    emptyDir: #tipo do volume
+      sizeLimit: 256Mi #limite de tamanho do volume
+
