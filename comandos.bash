@@ -55,6 +55,8 @@ kubectl get replicaset -A #lista todos os replicasets de todos os namespaces
 # LOG
 kubectl logs -n kube-system kube-proxy-sr2xb #retorna os logs do pod kube-proxy no namespace kube-system
 kubectl logs licao-casa -c wordpress #retorna os logs do container wordpress do pod licao-casa
+kubectl logs -n treinamento-ch2 pod-comportado -c polinux-stress #retorna os logs do container polinux-stress do pod pod-comportado no namespace treinamento-ch2
+kubectl logs -f nome-pod #segue os logs em tempo real do pod especificado
 
 # RUN
 kubectl run nome_pod --image nginx --port 80 #cria um pod com a imagem nginx e expõe a porta 80
