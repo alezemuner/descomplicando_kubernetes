@@ -1,0 +1,35 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: nginx-deployment
+    fruta: banana
+  name: nginx-deployment
+  namespace: giropops
+spec:
+  replicas: 10
+  revisionHistoryLimit: 10
+  selector: #como o deployment encontra os pods que ele gerencia
+    matchLabels:
+      app: nginx-deployment
+  strategy: #estratégia de rollout (padrão é RollingUpdate)
+#     type: Recreate #elimina todos os pods antigos antes de criar os novos
+    type: RollingUpdate #atualização gradual dos pods
+    rollingUpdate:
+      maxSurge: 0 #número máximo de pods extras que podem ser criados durante o rollout, pode definir em percentual tbm 10% por exemplo
+      maxUnavailable: 1 #número máximo de pods que podem estar indisponíveis durante o rollout
+  template: #template do pod que será criado
+    metadata:
+      labels:
+        app: nginx-deployment
+    spec:
+      containers:
+      - image: nginx:1.15.0
+        name: nginx-opa
+        resources:
+          limits:
+            cpu: 0.9
+            memory: 256Mi
+          requests:
+            cpu: 0.4
+            memory: 54Mi

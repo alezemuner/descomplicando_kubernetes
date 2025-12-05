@@ -29,7 +29,7 @@
 
 # ALIAS
 alias k=kubectl #cria um alias para quando digitar k seja kubectl
-nano nano ~/.bash_profile #para deixar permanente
+nano ~/.bash_profile #para deixar permanente
 alias k=kubectl #cria um alias para quando digitar k seja kubectl
 source ~/.bash_profile #atualiza o bash_profile
 
@@ -124,3 +124,26 @@ stress --cpu 1 --vm 1
     emptyDir: #tipo do volume
       sizeLimit: 256Mi #limite de tamanho do volume
 
+#DEPLOYMENT E ESTRATÉGIAS DE ROLLOUT
+kubectl create deployment nome-deployment --image=nginx #cria o deployment
+kubectl get deployments #lista os deployments
+kubectl get pods -l app=nginx-deployment #lista os pods do deployment nginx-deployment
+kubectl get replicasets #lista os replicasets
+kubectl describe deploy nginx-deployment #detalha o deployment nginx-deployment
+kubectl get deploy nginx-deployment -o yaml #retorna o deployment nginx-deployment em formato yaml
+kubectl get deploy nginx-deployment -o yaml > temp.yml   #salva o deployment em um arquivo temp.yml
+kubectl delete -f deployment.yml #deleta o deployment a partir do manifesto
+kubectl create deploy --image nginx --replicas 3 nginx-deployment --dry-run=client -o yaml > novo-deploymeent.yml #cria o deployment com 3 réplicas
+kubectl create namespace giropops
+kubectl apply -f deployment.yml 
+kubectl get pods -n giropops
+kubectl exec -it -n giropops nginx-deployment-865fbd567f-4hvx6 -- nginx -v #verifica a versão do nginx dentro do pod
+kubectl rollout status deploy -n giropops nginx-deployment #verifica o status do rollout
+kubectl rollout undo deploy -n giropops nginx-deployment #reverte para a versão anterior
+kubectl rollout history deploy -n giropops nginx-deployment #lista o histórico de rollouts
+kubectl rollout history deploy -n giropops nginx-deployment --revision 5
+kubectl rollout undo deploy -n giropops nginx-deployment --to-revision 5 #reverte para a revisão 5
+kubectl rollout pause deploy -n giropops nginx-deployment #pausa o rollout
+kubectl rollout resume deploy -n giropops nginx-deployment #retoma o rollout pausado
+kubectl rollout restart deploy -n giropops nginx-deployment # reinicia o deployment
+kubectl rollout status deploy -n giropops nginx-deployment #verifica o status do rollout
