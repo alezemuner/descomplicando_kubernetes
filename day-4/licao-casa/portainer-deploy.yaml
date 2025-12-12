@@ -1,0 +1,58 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: portainer
+  name: portainer-deployment
+spec:
+  replicas: 2
+  revisionHistoryLimit: 5
+  selector: 
+    matchLabels:
+      app: portainer
+  strategy: 
+    type: RollingUpdate #atualização gradual dos pods
+    rollingUpdate:
+      maxSurge: 2 #número máximo de pods extras que podem ser criados durante o rollout, pode definir em percentual tbm 10% por exemplo
+      maxUnavailable: 1 #número máximo de pods que podem estar indisponíveis durante o rollout
+  template: 
+    metadata:
+      labels:
+        app: portainer
+    spec:
+      hostNetwork: true
+      containers:
+      - image: portainer/portainer-ce:lts
+        name: portainer
+        resources:
+          limits:
+            cpu: 0.8
+            memory: 512Mi
+          requests:
+            cpu: 0.5
+            memory: 256Mi
+
+        livenessProbe: # Checa se o contêiner está vivo
+          tcpSocket:
+            port: 9443
+          initialDelaySeconds: 10 # Tempo para iniciar a checagem após o contêiner iniciar
+          periodSeconds: 10 # Frequência da checagem
+          timeoutSeconds: 5 # Tempo máximo para a checagem responder
+          failureThreshold: 3 # Número de falhas antes de considerar o contêiner como não saudável
+        
+        readinessProbe: # Checa se o contêiner está pronto para receber tráfego
+          tcpSocket:
+            port: 9443
+          initialDelaySeconds: 10 # Tempo para iniciar a checagem após o contêiner iniciar
+          periodSeconds: 10 # Frequência da checagem
+          timeoutSeconds: 5 # Tempo máximo para a checagem responder
+          failureThreshold: 3 # Número de falhas antes de considerar o contêiner como não saudável
+          successThreshold: 1 # Número de sucessos antes de considerar o contêiner como saudável
+        
+        startupProbe: # Checa se o contêiner iniciou corretamente
+          tcpSocket: # Usa TCP para checar se o contêiner iniciou corretamente
+            port: 9443
+          initialDelaySeconds: 10 # Tempo para iniciar a checagem após o contêiner iniciar
+          timeoutSeconds: 5 # Tempo máximo para a checagem responder
+          failureThreshold: 5 # Número de falhas antes de considerar o contêiner como não saudável 
+        

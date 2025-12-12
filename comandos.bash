@@ -146,7 +146,7 @@ kubectl rollout undo deploy -n giropops nginx-deployment --to-revision 5 #revert
 kubectl rollout pause deploy -n giropops nginx-deployment #pausa o rollout
 kubectl rollout resume deploy -n giropops nginx-deployment #retoma o rollout pausado
 kubectl rollout restart deploy -n giropops nginx-deployment # reinicia o deployment
-kubectl rollout status deploy -n giropops nginx-deployment #verifica o status do rollout
+
 
 #DEPLOYMENT E REPLICASET
 kubectl get deployments
