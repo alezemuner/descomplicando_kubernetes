@@ -147,3 +147,18 @@ kubectl rollout pause deploy -n giropops nginx-deployment #pausa o rollout
 kubectl rollout resume deploy -n giropops nginx-deployment #retoma o rollout pausado
 kubectl rollout restart deploy -n giropops nginx-deployment # reinicia o deployment
 kubectl rollout status deploy -n giropops nginx-deployment #verifica o status do rollout
+
+#DEPLOYMENT E REPLICASET
+kubectl get deployments
+kubectl get replicasets
+kubectl describe replicaset nginx-deployment #detalha o replicaset
+kubectl rollout undo deployment nginx-deployment #reverte o deployment para a versão anterior
+kubectl scale deploy nginx-deployment --replicas 3 #altera o número de réplicas do deployment para 3
+
+#DAEMONSET
+kubectl get daemonset
+kubectl get pods -l app=node-exporter-daemonset
+kubectl get pods -o wide -l app=node-exporter-daemonset
+kubectl describe daemonset node-exporter-daemonset
+
+#PROBES

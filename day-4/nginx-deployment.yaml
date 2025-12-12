@@ -1,0 +1,57 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: nginx-deployment
+  name: nginx-deployment
+spec:
+  replicas: 1
+  selector: #como o deployment encontra os pods que ele gerencia
+    matchLabels:
+      app: nginx-deployment
+  strategy: {}
+  template: #template do pod que será criado
+    metadata:
+      labels:
+        app: nginx-deployment
+    spec:
+      containers:
+      - image: nginx:1.19.1
+        name: nginx
+        resources:
+          limits:
+            cpu: 0.5
+            memory: 256Mi
+          requests:
+            cpu: 0.25
+            memory: 128Mi
+
+        livenessProbe: # Checa se o contêiner está vivo
+          #tcpSocket: # Usa TCP para checar se o contêiner está vivo
+          httpGet:
+            path: /
+            port: 80
+          initialDelaySeconds: 10 # Tempo para iniciar a checagem após o contêiner iniciar
+          periodSeconds: 10 # Frequência da checagem
+          timeoutSeconds: 5 # Tempo máximo para a checagem responder
+          failureThreshold: 3 # Número de falhas antes de considerar o contêiner como não saudável
+        
+        readinessProbe: # Checa se o contêiner está pronto para receber tráfego
+          exec: # Usa um comando para checar se o contêiner está pronto
+            command:
+            - curl
+            - -f
+            - http://localhost:80/
+          initialDelaySeconds: 10 # Tempo para iniciar a checagem após o contêiner iniciar
+          periodSeconds: 10 # Frequência da checagem
+          timeoutSeconds: 5 # Tempo máximo para a checagem responder
+          failureThreshold: 3 # Número de falhas antes de considerar o contêiner como não saudável
+          successThreshold: 1 # Número de sucessos antes de considerar o contêiner como saudável
+        
+        startupProbe: # Checa se o contêiner iniciou corretamente
+          tcpSocket: # Usa TCP para checar se o contêiner iniciou corretamente
+            port: 80
+          initialDelaySeconds: 10 # Tempo para iniciar a checagem após o contêiner iniciar
+          timeoutSeconds: 5 # Tempo máximo para a checagem responder
+          failureThreshold: 1 # Número de falhas antes de considerar o contêiner como não saudável 
+        
