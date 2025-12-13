@@ -1,39 +1,3 @@
-# IINSTALAÇÃO DAS FERRAMENTAS NECESSÁRIAS
-- docker
-- kubectl
-	curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
-   	chmod +x kubectl
-   	mv kubectl /usr/local/bin
-- kind
-	# For AMD64 / x86_64
-	[ $(uname -m) = x86_64 ] && curl -Lo ./kind https://kind.sigs.k8s.io/dl/v0.30.0/kind-linux-amd64
-	# For ARM64
-	[ $(uname -m) = aarch64 ] && curl -Lo ./kind https://kind.sigs.k8s.io/dl/v0.30.0/kind-linux-arm64
-	chmod +x ./kind
-	sudo mv ./kind /usr/local/bin/kind
-	
-# CRIAR/DELETAR CLUSTER KIND
-
-	kind create cluster
-	kind create cluster --config kind-cluster.yml --name nome-cluster
-	kind delete cluster
-
------------------------------------------------------------
-
-	yum install bash-completion
-	#configura o autocomplete na sua sessão atual (antes, certifique-se de ter instalado o pacote bash-completion).
-	source <(kubectl completion bash) 
-	kubectl completion bash > ~/.kube/completion.bash.inc
-	echo "source $HOME/.kube/completion.bash.inc" >> ~/.bash_profile #add autocomplete permanentemente ao seu shell.
-	source /.bash_profile
-
-# ALIAS
-alias k=kubectl #cria um alias para quando digitar k seja kubectl
-nano ~/.bash_profile #para deixar permanente
-alias k=kubectl #cria um alias para quando digitar k seja kubectl
-source ~/.bash_profile #atualiza o bash_profile
-
-
 # COMANDOS
 
 kubectl get nodes #lista os nodes
