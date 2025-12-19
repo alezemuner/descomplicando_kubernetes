@@ -1,5 +1,4 @@
 # COMANDOS
-
 kubectl get nodes #lista os nodes
 kubectl get namespaces #lista os namespaces
 kubectl get pods -A #lista todos os pods de todos os namespaces
@@ -126,3 +125,31 @@ kubectl get pods -o wide -l app=node-exporter-daemonset
 kubectl describe daemonset node-exporter-daemonset
 
 #PROBES
+
+
+#VOLUMES
+#STORAGE CLASS
+Forma de automatizar a provisão de volumes no cluster Kubernetes.
+EX:
+kubernetes.io/aws-ebs: AWS Elastic Block Store (EBS)
+kubernetes.io/azure-disk: Azure Disk
+kubernetes.io/gce-pd: Google Compute Engine (GCE) Persistent Disk
+kubernetes.io/cinder: OpenStack Cinder
+kubernetes.io/vsphere-volume: vSphere
+kubernetes.io/no-provisioner: Volumes locais
+kubernetes.io/host-path: Volumes locais
+
+#PV - PERSISTENT VOLUME
+Recurso de armazenamento no cluster Kubernetes que foi provisionado por um administrador ou dinamicamente provisionado usando Storage Classes.
+kubectl get pv -A #lista todos os persistent volumes
+kubectl describe pv meu-pv #detalha o persistent volume meu-pv
+
+#PVC - PERSISTENT VOLUME CLAIM
+Requisição de armazenamento feita por um usuário.
+#DYNAMIC PROVISIONING
+Provisionamento dinâmico de volumes de armazenamento conforme a demanda dos usuários, eliminando a necessidade de pré-provisionamento manual.
+
+kubectl apply -f storageclass.yaml
+kubectl get storageclass #lista as storage classes disponíveis
+kubectl describe storageclass giropops #detalha a storage class giropops
+

@@ -1,0 +1,16 @@
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  labels:
+    pvc: primeiro-pvc
+  name: meu-pvc
+spec:
+  accessModes:
+    - ReadWriteOnce # Apenas um nó pode montar o volume para leitura e escrita
+  resources:
+    requests:
+      storage: 1Gi
+  storageClassName: giropops
+  selector:
+    matchLabels:
+      storage: nfs

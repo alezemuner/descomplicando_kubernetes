@@ -1,0 +1,45 @@
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  labels:
+    storage: nfs
+  name: meu-pv-nfs
+spec:
+  capacity:
+    storage: 1Gi
+  accessModes:
+    - ReadWriteOnce # Apenas um nó pode montar o volume para leitura e escrita
+  persistentVolumeReclaimPolicy: Retain # Política de retenção do volume
+  nfs:
+    server: 172.16.44.202
+    path: "/mnt/nfs"
+  storageClassName: giropops
+
+
+#Instalar os utilitários de NFS
+  #sudo dnf install nfs-utils -y (instalar nos workers também)
+#Criar o ponto de montagem
+  #sudo mkdir -p /mnt/nfs
+#Montar manualmente (Teste)
+#Para testar se a conexão está funcionando, faça a montagem manual.
+  #mount -t nfs <IP_DO_SERVIDOR>:<CAMINHO_REMOTO> /mnt/nfs
+  #Exemplo: sudo mount -t nfs 192.168.1.100:/dados /mnt/nfs
+  # df -h /mnt/nfs
+
+#Configurar montagem automática (Persistência)
+#Se você reiniciar o servidor, a montagem manual será perdida. Para que o NFS monte automaticamente no boot, edite o arquivo /etc/fstab.
+ # sudo nano /etc/fstab
+#Adicione a seguinte linha ao final do arquivo:
+ # 192.168.1.100:/dados    /mnt/nfs    nfs    defaults    0 0
+
+ # 192.168.1.100:/dados: O servidor e a pasta de origem.
+ # /mnt/nfs: Onde será montado no seu Oracle Linux.
+ # nfs: O tipo do sistema de arquivos.
+ # defaults: Opções padrão de montagem.
+
+# Para testar se o fstab está correto sem precisar reiniciar, use:
+  # sudo mount -a
+
+#sudo systemctl enable --now nfs-server
+# nano /etc/exports
+#/mnt/nfs  *(rw,sync,no_root_squash,no_all_squash)  
