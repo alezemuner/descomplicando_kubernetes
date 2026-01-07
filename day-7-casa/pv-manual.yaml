@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: pv-nginx-0  # Nome do volume físico
+  labels:
+    type: local
+spec:
+  storageClassName: "" # IMPORTANTE: Vazio para casar com o PVC que não tem classe
+  capacity:
+    storage: 1Gi     # Deve ser igual ou maior que o pedido no PVC
+  accessModes:
+    - ReadWriteOnce
+  hostPath:          # Como é um lab, vamos usar uma pasta do próprio nó
+    path: "/mnt/data/nginx-0" # O Kubernetes criará essa pasta se não existir (na maioria das versões)
