@@ -12,5 +12,12 @@ Headless Service # Uma Headless Service no Kubernetes é um tipo especial de ser
 
 Service é o processo pelo qual os serviços em um cluster Kubernetes encontram e se comunicam uns com os outros. Com uma Headless Service, os pods podem ser descobertos diretamente através de seus nomes DNS, facilitando a comunicação entre eles.
 Uma maneira de expor os pods inclusive externamente
+
+Tipos de Service no Kubernetes:
 ClusterIP # O ClusterIP é o tipo padrão de serviço no Kubernetes. Ele cria um endereço IP interno para o serviço, permitindo que os pods dentro do cluster se comuniquem entre si. No entanto, o ClusterIP não é acessível externamente ao cluster.
+
 NodePort # O NodePort é um tipo de serviço que expõe o serviço em um número de porta específico em cada nó do cluster. Isso permite que o serviço seja acessado externamente ao cluster através do IP do nó e da porta designada.
+
+LoadBalancer # O LoadBalancer é um tipo de serviço que cria um balanceador de carga externo para distribuir o tráfego entre os pods. Isso é útil para aplicativos que precisam ser acessados externamente e requerem balanceamento de carga.
+
+ExternalName # O ExternalName é um tipo de serviço que mapeia o serviço para um nome DNS externo. Isso permite que os pods dentro do cluster acessem serviços externos usando um nome DNS, sem a necessidade de criar um serviço separado.
