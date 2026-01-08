@@ -1,0 +1,17 @@
+apiVersion: metallb.io/v1beta1
+kind: IPAddressPool
+metadata:
+  name: meu-pool-ips
+  namespace: metallb-system
+spec:
+  addresses:
+  - 172.16.44.245-172.16.44.250 # <--- Ajuste se esses IPs ja estiverem em uso!
+---
+apiVersion: metallb.io/v1beta1
+kind: L2Advertisement
+metadata:
+  name: meu-anuncio-l2
+  namespace: metallb-system
+spec:
+  ipAddressPools:
+  - meu-pool-ips

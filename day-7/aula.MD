@@ -21,3 +21,31 @@ NodePort # O NodePort é um tipo de serviço que expõe o serviço em um número
 LoadBalancer # O LoadBalancer é um tipo de serviço que cria um balanceador de carga externo para distribuir o tráfego entre os pods. Isso é útil para aplicativos que precisam ser acessados externamente e requerem balanceamento de carga.
 
 ExternalName # O ExternalName é um tipo de serviço que mapeia o serviço para um nome DNS externo. Isso permite que os pods dentro do cluster acessem serviços externos usando um nome DNS, sem a necessidade de criar um serviço separado.
+
+kubectl expose deployment MEU_DEPLOYMENT --port=80 --type=NodePort
+
+k create deployment nginx --image nginx --port 80
+k scale deployment nginx --replicas 3
+k expose deployment nginx
+k run -ti --rm debug --image busybox --restart Never -- sh
+k expose deployment nginx --type NodePort # Expõe o deployment nginx usando o tipo NodePort para acessar externamente.
+nginx        NodePort    10.107.112.50   <none>        80:32531/TCP   4s (a porta 32531 é a porta externa)
+k get endpoints (Endpoints is deprecated in v1.33+)
+k get EndpointSlice
+
+k expose deployment nginx --type LoadBalancer # Expõe o deployment nginx usando o tipo LoadBalancer para criar um balanceador de carga externo.
+k exec -ti nginx-86c57bc6b8-5cqdx -- bash
+echo GIROPOPS > /usr/share/nginx/html/index.html
+k get svc
+nginx        LoadBalancer   10.98.0.1    172.16.44.245   80:31102/TCP   16m
+http://172.16.44.245/
+
+k create service externalname nome-externalname --external-name nome-definido-external.ip # Cria um serviço do tipo ExternalName que mapeia para o nome DNS externo "nome-definido-external.ip".
+NAME                TYPE           CLUSTER-IP   EXTERNAL-IP                 PORT(S)   AGE
+nome-externalname   ExternalName   <none>       nome-definido-external.ip   <none>    17s
+
+Criando um service expondo outro service
+kubectl expose deployment nginx --name opa --type NodePort --port 80 # Expõe o deployment nginx com o nome "opa" usando o tipo NodePort na porta 80.
+
+
+

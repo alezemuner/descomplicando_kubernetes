@@ -1,6 +1,6 @@
-O problema está no PROVISIONER: kubernetes.io/no-provisioner.
+No ambiente virtual necessario instalar o local-path-provisioner para distribuir os PVs para o Statefulset.
 
-Essa StorageClass (giropops) é do tipo Estática. Foi criada para casos onde cria o disco manualmente antes (o PV) e o Kubernetes apenas o "entrega" para o Pod. Ela não consegue criar discos automaticamente (Dynamic Provisioning).
+O StorageClass (giropops kubernetes.io/no-provisioner.) é do tipo Estática. Foi criada para casos onde cria o disco manualmente antes (o PV) e o Kubernetes apenas o "entrega" para o Pod. Ela não consegue criar discos automaticamente (Dynamic Provisioning).
 
 Como o StatefulSet usa volumeClaimTemplates, ele está "pedindo" para o Kubernetes criar 3 discos novos.
 
