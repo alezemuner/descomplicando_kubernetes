@@ -79,5 +79,6 @@ k get configmaps nginx-config -o yaml > configmaps.yaml
 k apply -f pod-configmap-secret.yaml 
 
 k expose pod nginx
+k expose pod nginx --name nginx-loadbalancer  --type LoadBalancer 
 
 k port-forward services/nginx 4443:443
