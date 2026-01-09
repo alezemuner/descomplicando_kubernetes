@@ -1,0 +1,10 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: pod-privado
+spec:
+  containers:
+  - name: meu-container
+    image: alezemuner/ubuntu-curl:v1
+  imagePullSecrets: # Inicio da definição do uso do Secret para autenticação no repositório privado
+  - name: dockerhub-secret # Nome do Secret criado para autenticação no repositório
