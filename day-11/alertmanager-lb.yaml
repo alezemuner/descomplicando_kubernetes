@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: alertmanager-lb          # Nome novo para não conflitar com o original
+  namespace: monitoring
+spec:
+  type: LoadBalancer
+  selector:
+    # Estes seletores buscam os pods do AlertManager já existentes.
+    # No kube-prometheus-stack padrão, geralmente é este:
+    app.kubernetes.io/name: alertmanager
+  ports:
+    - protocol: TCP
+      port: 33002           # A porta externa que você quer usar na rede
+      targetPort: 9093      # A porta interna onde o AlertManager roda
