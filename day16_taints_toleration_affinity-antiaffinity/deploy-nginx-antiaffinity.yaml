@@ -1,0 +1,30 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: nginx
+  name: nginx
+spec:
+  replicas: 4
+  selector:
+    matchLabels:
+      app: nginx
+  template:
+    metadata:
+      labels:
+        app: nginx
+    spec:
+      containers:
+      - image: nginx
+        name: nginx
+        ports:
+        - containerPort: 80
+      affinity:
+        podAntiAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution: # Obrigatório para o agendamento, mas pode ser ignorado durante a execução
+          # referredDuringSchedulingIgnoredDuringExecution: # Preferencial para o agendamento, mas pode ser ignorado durante a execução
+          - labelSelector:
+              matchLabels:
+                app: nginx
+            topologyKey: "region" # Garante que os pods sejam agendados em nós diferentes, evitando que fiquem no mesmo nó
+            #topologyKey: "az" # Garante que os pods sejam agendados em zonas de disponibilidade diferentes, evitando que fiquem na mesma zona de disponibilidade

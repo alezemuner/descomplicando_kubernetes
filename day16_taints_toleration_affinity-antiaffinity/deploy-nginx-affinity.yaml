@@ -1,0 +1,31 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: nginx
+  name: nginx
+spec:
+  replicas: 4
+  selector:
+    matchLabels:
+      app: nginx
+  template:
+    metadata:
+      labels:
+        app: nginx
+    spec:
+      containers:
+      - image: nginx
+        name: nginx
+        ports:
+        - containerPort: 80
+      affinity:
+        nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution: # Obrigatório para o agendamento, mas pode ser ignorado durante a execução
+          # preferredDuringSchedulingIgnoredDuringExecution: # Preferencial para o agendamento, mas pode ser ignorado durante a execução
+            nodeSelectorTerms:
+            - matchExpressions:
+              - key: "region"
+                operator: In # O valor da chave deve estar dentro da lista de valores
+                values:
+                - "sa-east-1"

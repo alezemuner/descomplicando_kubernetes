@@ -1,10 +1,15 @@
 
 *.crt
 *.key
-
+*.pub
+venv/
+__pycache__/
 DS_Store
 *.log
 .idea/
 .vscode/
 *.swp
 auth
+get_helm.sh
+day13_criando-imagens_reduzindo-vulnerabilidade-wolfi/giropops-senhas/
+**/giropops-senhas/

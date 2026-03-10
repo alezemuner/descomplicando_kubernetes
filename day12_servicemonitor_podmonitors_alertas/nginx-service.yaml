@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: nginx-svc          # Nome novo para não conflitar com o original
+  labels:
+    app: nginx
+spec:
+#  type: LoadBalancer
+  ports:
+    - port: 9133
+      name: metrics
+  selector:
+    app: nginx
