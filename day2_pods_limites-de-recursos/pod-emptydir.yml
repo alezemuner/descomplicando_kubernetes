@@ -8,8 +8,10 @@ spec:
   containers:
   - image: nginx
     name: webserver
+    ports:
+    - containerPort: 80
     volumeMounts:
-    - mountPath: /giropops
+    - mountPath: /giropops #caminho onde o volume será montado dentro do container
       name: primeiro-emptydir
     resources:
       limits:

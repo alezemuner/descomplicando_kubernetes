@@ -18,6 +18,8 @@ spec:
       containers:
       - image: nginx:1.19.1
         name: nginx
+        ports:
+          - containerPort: 80
         resources:
           limits:
             cpu: 0.5
@@ -27,9 +29,11 @@ spec:
             memory: 128Mi
 
         livenessProbe: # Checa se o contêiner está vivo
-          #tcpSocket: # Usa TCP para checar se o contêiner está vivo
+          # tcpSocket: # Usa TCP para checar se o contêiner está vivo
+          #   port: 80 # mudar para porta 81 para testar a falha da livenessProbe
           httpGet:
             path: /
+            # path: /teste # mudar para uma rota inexistente para testar a falha da livenessProbe
             port: 80
           initialDelaySeconds: 10 # Tempo para iniciar a checagem após o contêiner iniciar
           periodSeconds: 10 # Frequência da checagem
@@ -51,7 +55,7 @@ spec:
         startupProbe: # Checa se o contêiner iniciou corretamente
           tcpSocket: # Usa TCP para checar se o contêiner iniciou corretamente
             port: 80
+            #port: 81
           initialDelaySeconds: 10 # Tempo para iniciar a checagem após o contêiner iniciar
           timeoutSeconds: 5 # Tempo máximo para a checagem responder
-          failureThreshold: 1 # Número de falhas antes de considerar o contêiner como não saudável 
-        
+          failureThreshold: 1 # Número de falhas antes de considerar o contêiner como não saudável   

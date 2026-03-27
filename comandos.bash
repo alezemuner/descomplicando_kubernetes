@@ -1,6 +1,5 @@
 # COMANDOS
 kubectl get nodes #lista os nodes
-kubectl get namespaces #lista os namespaces
 kubectl get pods -A #lista todos os pods de todos os namespaces
 kubectl get pods -o wide #retorna mais informações
 kubectl get pods -L nome_label #retorna as labels dos pods
@@ -8,8 +7,11 @@ kubectl get pods -n kube-system #lista os pods no namespace kube-system
 kubectl get pods -n kube-system -o wide #lista os pods no namespace kube-system com mais informações
 kubectl get pods --all-namespaces #lista os pods de todos os namespaces
 kubectl get pods nome-pod -o yaml (yaml) #retorna o pod em formato yaml
+kubectl get namespaces #lista os namespaces
 
-kubectl describe pods nome_pod (descreve o pod) #retorna informações detalhadas do pod
+kubectl describe pods nome_pod #retorna informações detalhadas do pod
+kubectl get pods nome_pod -o yaml # retorna o pod em formato yaml
+kubectl delete pods nome_pod # deleta o pod especificado
 
 kubectl get deploy -A #lista todos os deployments de todos os namespaces
 kubectl get svc -A #lista todos os serviços de todos os namespaces
@@ -22,17 +24,19 @@ kubectl logs -n treinamento-ch2 pod-comportado -c polinux-stress #retorna os log
 kubectl logs -f nome-pod #segue os logs em tempo real do pod especificado
 
 # RUN
-kubectl run nome_pod --image nginx --port 80 #cria um pod com a imagem nginx e expõe a porta 80
 kubectl delete pod nome_pod #deleta o pod especificado
+kubectl run --image nginx --port 80 nginx-pod #cria um pod com a imagem nginx e expõe a porta 80
+kubectl exec -ti nginx -- bash #acessa o pod nginx via bash
 
-kubectl expose pods nome_pod #expõe o pod como um serviço
-kubectl expose pods nome_pod --type NodePort #expõe o pod como um serviço do tipo NodePort
+
+# EXPOSE
+kubectl expose pods nginx-pod #expõe o pod como um serviço
+kubectl expose pods nginx-pod --type NodePort #expõe o pod como um serviço do tipo NodePort (se pegar o ip do nó e a porta, é possível acessar o serviço de fora do cluster)
 kubectl delete svc nginx #deleta o serviço nginx
 
 kubectl exec -ti nginx -- bash #acessa o pod nginx via bash
 
 # DRY RUN
-
 kubectl run --image nginx --port 80 nginx --dry-run=client -o yaml > pod.yaml #simula a criação do pod e devolve em um yaml
 kubectl apply -f pod.yaml #cria o pod a partir do arquivo yaml
 

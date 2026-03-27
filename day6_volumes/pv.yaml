@@ -9,7 +9,22 @@ spec:
     storage: 1Gi
   accessModes:
     - ReadWriteOnce # Apenas um nó pode montar o volume para leitura e escrita
+#    - ReadWriteMany # Vários nós podem montar o volume para leitura e escrita
+#    - ReadOnlyMany # Vários nós podem montar o volume para leitura, mas não para escrita
   persistentVolumeReclaimPolicy: Retain # Política de retenção do volume
   hostPath:
     path: /mnt/data
   storageClassName: giropops
+
+  # nfs:
+  #   server: nfs-server
+  #   path: /data
+
+  # local:
+  #   path: /mnt/data
+
+  # iscsi:
+  #   targetPortal: 10.0.0.1:3260
+  #   iqn: iqn.2018-01.com.example:storage
+  #   lun: 0
+  #   fsType: ext4

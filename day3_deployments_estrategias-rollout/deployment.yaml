@@ -1,0 +1,34 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: nginx-deployment
+    fruta: laranja
+  name: nginx-deployment
+  namespace: giropops
+spec:
+  replicas: 5
+  selector: # o selector é usado para selecionar os Pods que o Deployment gerencia
+    matchLabels: # o matchLabels é usado para selecionar os Pods que o Deployment gerencia atraves de labels
+      app: nginx-deployment
+  strategy: # a strategy é usada para definir a estratégia de atualização do Deployment, como RollingUpdate ou Recreate
+    #type: Recreate # a estratégia de atualização é definida como Recreate, o que significa que os Pods serão recriados durante a atualização, causando downtime
+    type: RollingUpdate # a estratégia de atualização é definida como RollingUpdate, o que significa que os Pods serão atualizados gradualmente, sem downtime
+    rollingUpdate:
+      maxSurge: 1 # o maxSurge é usado para definir o número máximo de Pods extras que podem ser criados durante a atualização. (pode ser em percentual ou número inteiro)
+      maxUnavailable: 1 # o maxUnavailable é usado para definir o número máximo de Pods que podem estar indisponíveis durante a atualização.
+  template: # define as configurações dos Pods que serão criados pelo Deployment
+    metadata:
+      labels:
+        app: nginx-deployment
+    spec:
+      containers:
+      - image: nginx:1.17.0
+        name: nginx
+        resources:
+          limits:
+            cpu: 0.5
+            memory: 128Mi
+          requests:
+            cpu: 0.3
+            memory: 64Mi

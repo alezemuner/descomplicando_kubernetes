@@ -9,17 +9,17 @@ spec:
   selector:
     matchLabels:
       app: nginx-app
-  template:
+  template: 
     metadata:
       labels:
         app: nginx-app
     spec:
       containers:
-      - image: nginx:1.19.1
+      - image: nginx:1.19.2
         name: nginx
         resources:
           limits:
-            cpu: "0.5"
+            cpu: 0.5
             memory: 256Mi
           requests:
             cpu: 0.25
