@@ -3,7 +3,8 @@ kind: StatefulSet # Tipo do recurso que estamos criando, no caso, um StatefulSet
 metadata:
   name: nginx
 spec:
-  serviceName: "nginx"
+  serviceName: "nginx" # O nome do serviço que será criado para o StatefulSet, ele é necessário para que os pods possam se comunicar entre si utilizando o nome do serviço como hostname.
+                       # O serviço criado será do tipo headless, ou seja, sem um IP fixo, permitindo que cada pod tenha seu próprio IP e seja acessível individualmente.
   replicas: 3
   selector:
     matchLabels:
@@ -22,12 +23,14 @@ spec:
         volumeMounts:
         - name: www
           mountPath: /usr/share/nginx/html
-  volumeClaimTemplates: # Como estamos utilizando StatefulSet, precisamos criar um template de volume para cada Pod, então ao invés de criarmos um volume diretamente, criamos um template que será utilizado para criar um volume para cada Pod
+  volumeClaimTemplates: # Como estamos utilizando StatefulSet, precisamos criar um template de volume para cada Pod, então ao invés de criarmos um volume diretamente, 
+                        #criamos um template que será utilizado para criar um volume para cada Pod
   - metadata:
       name: www # Nome do volume, assim teremos o volume www-0, www-1 e www-2
     spec:
       accessModes: [ "ReadWriteOnce" ]
-      storageClassName: local-path
+      storageClassName: local-path # StorageClass que será utilizado para criar os volumes, nesse caso estamos utilizando o local-path, que é um provisionador de armazenamento local
+                                   # para Kubernetes, ele cria volumes utilizando o armazenamento local do nó onde o pod está sendo executado.
       resources:
         requests:
           storage: 1Gi
