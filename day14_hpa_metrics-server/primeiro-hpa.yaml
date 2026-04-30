@@ -1,15 +1,15 @@
 # Definição do HPA para o nginx-deployment
-apiVersion: autoscaling/v2  # Versão da API que define um HPA
-kind: HorizontalPodAutoscaler  # Tipo de recurso que estamos definindo
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
 metadata:
-  name: nginx-deployment-hpa  # Nome do nosso HPA
+  name: nginx-deployment-hpa
 spec:
   scaleTargetRef:
-    apiVersion: apps/v1        # A versão da API do recurso alvo
+    apiVersion: apps/v1
     kind: Deployment           # O tipo de recurso alvo
     name: nginx-deployment     # O nome do recurso alvo
-  minReplicas: 2              # Número mínimo de réplicas
-  maxReplicas: 10              # Número máximo de réplicas
+  minReplicas: 1               # Número mínimo de réplicas
+  maxReplicas: 3              # Número máximo de réplicas
   metrics:
   - type: Resource             # Tipo de métrica (recurso do sistema)
     resource:
@@ -17,29 +17,31 @@ spec:
       target:
         type: Utilization      # Tipo de alvo (utilização)
         averageUtilization: 50 # Valor alvo (50% de utilização)
-  - type: Resource             # Tipo de métrica (recurso do sistema)
+  - type: Resource             
     resource:
       name: memory             # Nome da métrica (memória neste caso)
       target:
         type: Utilization      # Tipo de alvo (utilização)
         averageUtilization: 70 # Valor alvo (70% de utilização)
+
   - type: ContainerResource    # Tipo de métrica (recurso do contêiner)
     containerResource:
-      name: cpu              # Nome do contêiner    
+      name: cpu              # Nome da metrica (CPU do contêiner)    
       container: nginx        # Nome do contêiner dentro do pod
       target:
         type: Utilization      # Tipo de alvo (utilização)
         averageUtilization: 70 # Valor alvo (70% de utilização)
-  behavior:
+        
+  behavior: # Configurações de comportamento do HPA para evitar flapping e garantir estabilidade durante as escalagens.
     scaleUp:
-      stabilizationWindowSeconds: 5
+      stabilizationWindowSeconds: 5 # Tempo de estabilização para escalagem para cima (5 segundos, no caso definido como 50% averageUtilization: 50))
       policies:
       - type: Percent
         value: 100
-        periodSeconds: 10
+        periodSeconds: 10 # Tempo mínimo entre escalagens para cima (10 segundos)
     scaleDown:
-      stabilizationWindowSeconds: 60
+      stabilizationWindowSeconds: 60 # Tempo de estabilização para escalagem para baixo (60 segundos)
       policies:
       - type: Percent
         value: 100
-        periodSeconds: 10      
+        periodSeconds: 10 # Tempo mínimo entre escalagens para baixo (10 segundos)

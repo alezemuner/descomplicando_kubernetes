@@ -4,12 +4,12 @@ metadata:
   name: giropops-senhas-canary
   annotations: # Configura o rewrite da URL   
     nginx.ingress.kubernetes.io/rewrite-target: /
+    cert-manager.io/cluster-issuer: "selfsigned-issuer" # Anotação para o cert-manager usar o ClusterIssuer autoassinado
+    #cert-manager.io/cluster-issuer: "letsencrypt-prod" # Anotação para o cert-manager usar o ClusterIssuer correto
 
     nginx.ingress.kubernetes.io/canary: "true" # Habilita o suporte a canary releases
     nginx.ingress.kubernetes.io/canary-weight: "10" # Define o peso do tráfego para o canary (10%)
 
-    cert-manager.io/cluster-issuer: "selfsigned-issuer" # Anotação para o cert-manager usar o ClusterIssuer autoassinado
-    #cert-manager.io/cluster-issuer: "letsencrypt-prod" # Anotação para o cert-manager usar o ClusterIssuer correto
 spec:
   ingressClassName: nginx #inseri a classe do ingress, pois nao funcionou sem. 
   tls:

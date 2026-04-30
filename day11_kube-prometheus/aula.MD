@@ -270,6 +270,7 @@ Criar arquivo `alertmanager-allow-external.yaml` e aplicar:
 
 ```bash
 kubectl apply -f alertmanager-allow-external.yaml
+```
 ---
 
 ## ServiceMonitor

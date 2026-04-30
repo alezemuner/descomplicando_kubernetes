@@ -12,4 +12,5 @@ DS_Store
 auth
 get_helm.sh
 day13_criando-imagens_reduzindo-vulnerabilidade-wolfi/giropops-senhas/
+day11_kube-prometheus/kube-prometheus/
 **/giropops-senhas/

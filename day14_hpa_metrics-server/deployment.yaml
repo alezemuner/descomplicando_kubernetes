@@ -1,27 +1,27 @@
 # Definição de um Deployment para o servidor Nginx
-apiVersion: apps/v1  # Versão da API que define um Deployment
-kind: Deployment     # Tipo de recurso que estamos definindo
+apiVersion: apps/v1 
+kind: Deployment
 metadata:
-  name: nginx-deployment  # Nome do nosso Deployment
+  name: nginx-deployment
 spec:
   # replicas: 3             # Número inicial de réplicas
   selector:
     matchLabels:
-      app: nginx         # Label que identifica os pods deste Deployment
+      app: nginx
   template:
     metadata:
       labels:
-        app: nginx       # Label aplicada aos pods
+        app: nginx
     spec:
       containers:
-      - name: nginx      # Nome do contêiner
-        image: nginx:latest  # Imagem do contêiner
+      - name: nginx
+        image: nginx:latest
         ports:
-        - containerPort: 80  # Porta exposta pelo contêiner
+        - containerPort: 80
         resources:
           limits:
             cpu: 0.02      # Limite de CPU
-            memory: 32M    # Limite de memória
+            memory: 32Mi    # Limite de memória
           # requests:
           #   cpu: 250m        # Requisição de CPU
           #   memory: 128Mi    # Requisição de memória

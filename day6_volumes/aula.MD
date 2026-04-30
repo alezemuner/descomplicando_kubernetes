@@ -1,129 +1,275 @@
-# Volume
+# 💾 Descomplicando Kubernetes - Day 6: Volumes
 
-# Emptydir
-O EmptyDir é um tipo de volume que é criado quando um Pod é atribuído a um nó e existe enquanto o Pod estiver em execução nesse nó. Ele é usado para armazenar dados temporários que precisam ser compartilhados entre os contêineres de um Pod. O conteúdo do EmptyDir é excluído quando o Pod é excluído ou movido para outro nó.
+## Índice
+- [EmptyDir](#emptydir)
+- [PersistentVolume (PV)](#persistentvolume-pv)
+- [StorageClass](#storageclass)
+- [Tipos de Volumes](#tipos-de-volumes)
+- [PersistentVolumeClaim (PVC)](#persistentvolumeclaim-pvc)
 
-# PersistenteVolume
-O PersistentVolume (PV) é um recurso do Kubernetes que representa um pedaço de armazenamento provisionado por um administrador. Ele é independente do ciclo de vida dos Pods e pode ser usado para armazenar dados persistentes. Os PVs podem ser provisionados dinamicamente ou estaticamente, e os Pods podem solicitar acesso a eles usando PersistentVolumeClaims (PVCs).
+---
+
+## EmptyDir
+
+### O que é
+
+O **EmptyDir** é um tipo de volume que é criado quando um Pod é atribuído a um nó e existe **enquanto o Pod estiver em execução** nesse nó.
+
+| Característica | Descrição |
+|----------------|-----------|
+| **Criação** | Automática quando o Pod é agendado |
+| **Persistência** | Dados existem enquanto o Pod está rodando |
+| **Compartilhamento** | Compartilhado entre contêineres do mesmo Pod |
+| **Remoção** | Excluído quando o Pod é excluído ou movido |
+
+💡 **Caso de uso:** Dados temporários que precisam ser compartilhados entre contêineres de um Pod.
+
+---
+
+## PersistentVolume (PV)
+
+### O que é
+
+O **PersistentVolume (PV)** é um recurso do Kubernetes que representa um **pedaço de armazenamento provisionado por um administrador**.
+
+| Característica | Descrição |
+|----------------|-----------|
+| **Ciclo de vida** | Independente dos Pods |
+| **Provisionamento** | Dinâmico ou estático |
+| **Acesso** | Solicitado via PersistentVolumeClaim (PVC) |
+
+### Modos de Acesso
+
+| Modo | Descrição |
+|------|-----------|
+| **ReadWriteOnce (RWO)** | Apenas um nó pode montar para leitura e escrita |
+| **ReadWriteMany (RWX)** | Vários nós podem montar para leitura e escrita |
+| **ReadOnlyMany (ROX)** | Vários nós podem montar para leitura, mas não escrita |
+
+---
 
 ## StorageClass
-O StorageClass é um recurso do Kubernetes que define as classes de armazenamento disponíveis para os PersistentVolumes. Ele permite que os administradores definam diferentes tipos de armazenamento com base em suas características, como desempenho, custo e disponibilidade. Os usuários podem solicitar um tipo específico de armazenamento ao criar um PersistentVolumeClaim (PVC) usando a StorageClass.
 
-É uma forma de catergorização e abstração dos tipos de armazenamento disponíveis, facilitando a escolha do tipo de armazenamento adequado para as necessidades específicas de um aplicativo. O StorageClass pode ser usado para provisionamento dinâmico de volumes, onde o Kubernetes cria automaticamente um PersistentVolume (PV) quando um PersistentVolumeClaim (PVC) é criado com uma StorageClass específica.
+### O que é
+
+O **StorageClass** é um recurso que define as **classes de armazenamento disponíveis** para os PersistentVolumes.
+
+✨ **Propósito:** Categorização e abstração dos tipos de armazenamento
+
+| Benefício | Descrição |
+|-----------|-----------|
+| **Flexibilidade** | Múltiplos tipos de armazenamento |
+| **Provisionamento dinâmico** | Criação automática de PVs |
+| **Performance** | Diferentes níveis de desempenho |
+| **Custo** | Opções para diferentes orçamentos |
+
+### Exemplo de Uso
 
 ```bash
+# Listar StorageClasses disponíveis
 kubectl get storageclass
-NAME         PROVISIONER             RECLAIMPOLICY   VOLUMEBINDINGMODE      ALLOWVOLUMEEXPANSION   AGE
-local-path   rancher.io/local-path   Delete          WaitForFirstConsumer   false                  78d
+# NAME         PROVISIONER             RECLAIMPOLICY   VOLUMEBINDINGMODE      ALLOWVOLUMEEXPANSION   AGE
+# local-path   rancher.io/local-path   Delete          WaitForFirstConsumer   false                  78d
 
+# Criar um StorageClass
 kubectl apply -f storageclass.yaml
-storageclass.storage.k8s.io/giropops created
+# storageclass.storage.k8s.io/giropops created
 
+# Verificar novamente
 kubectl get storageclass
-NAME         PROVISIONER                    RECLAIMPOLICY   VOLUMEBINDINGMODE      ALLOWVOLUMEEXPANSION   AGE
-giropops     kubernetes.io/no-provisioner   Retain          WaitForFirstConsumer   false                  31s
-local-path   rancher.io/local-path          Delete          WaitForFirstConsumer   false                  78d
-
-
+# NAME         PROVISIONER                    RECLAIMPOLICY   VOLUMEBINDINGMODE      ALLOWVOLUMEEXPANSION   AGE
+# giropops     kubernetes.io/no-provisioner   Retain          WaitForFirstConsumer   false                  31s
+# local-path   rancher.io/local-path          Delete          WaitForFirstConsumer   false                  78d
 ```
 
-## PV (PersistentVolume)
-O PersistentVolume (PV) é um recurso do Kubernetes que representa um pedaço de armazenamento provisionado por um administrador. Ele é independente do ciclo de vida dos Pods e pode ser usado para armazenar dados persistentes. Os PVs podem ser provisionados dinamicamente ou estaticamente, e os Pods podem solicitar acesso a eles usando PersistentVolumeClaims (PVCs).
+⚠️ **Parâmetros importantes:**
+- **Provisioner:** Define quem cria o volume
+- **ReclaimPolicy:** Delete (apaga) ou Retain (mantém)
+- **VolumeBindingMode:** Immediate ou WaitForFirstConsumer
 
-ReadWriteOnce # Apenas um nó pode montar o volume para leitura e escrita
-ReadWriteMany # Vários nós podem montar o volume para leitura e escrita
-ReadOnlyMany # Vários nós podem montar o volume para leitura, mas não para escrita
+## StorageClass
+
+O **StorageClass** é um recurso do Kubernetes que define as **classes de armazenamento disponíveis** para os PersistentVolumes.
+
+✨ **Propósito:** Categorização e abstração dos tipos de armazenamento
+
+| Benefício | Descrição |
+|-----------|-----------|
+| **Flexibilidade** | Múltiplos tipos de armazenamento |
+| **Provisionamento dinâmico** | Criação automática de PVs |
+| **Performance** | Diferentes níveis de desempenho |
+| **Custo** | Opções para diferentes orçamentos |
+
+### Exemplo de Uso
 
 ```bash
-kubectl get pv
+# Listar StorageClasses disponíveis
+kubectl get storageclass
+# NAME         PROVISIONER             RECLAIMPOLICY   VOLUMEBINDINGMODE      ALLOWVOLUMEEXPANSION   AGE
+# local-path   rancher.io/local-path   Delete          WaitForFirstConsumer   false                  78d
 
-kubectl apply -f pv.yaml
+# Criar um StorageClass
+kubectl apply -f storageclass.yaml
+# storageclass.storage.k8s.io/giropops created
 
-kubectl get pv
-NAME     CAPACITY   ACCESS MODES   RECLAIM POLICY   STATUS      CLAIM   STORAGECLASS   VOLUMEATTRIBUTESCLASS   REASON   AGE
-meu-pv   1Gi        RWO            Retain           Available           giropops       <unset>                          5s
-
+# Verificar novamente
+kubectl get storageclass
+# NAME         PROVISIONER                    RECLAIMPOLICY   VOLUMEBINDINGMODE      ALLOWVOLUMEEXPANSION   AGE
+# giropops     kubernetes.io/no-provisioner   Retain          WaitForFirstConsumer   false                  31s
+# local-path   rancher.io/local-path          Delete          WaitForFirstConsumer   false                  78d
 ```
 
+⚠️ **Parâmetros importantes:**
+- **Provisioner:** Define quem cria o volume
+- **ReclaimPolicy:** Delete (apaga) ou Retain (mantém)
+- **VolumeBindingMode:** Immediate ou WaitForFirstConsumer
+
+---
+
+## Tipos de Volumes
 
 ### HostPath
-O HostPath é um tipo de volume que monta um diretório do sistema de arquivos do nó onde o Pod está sendo executado. Ele é útil para casos em que um contêiner precisa acessar arquivos ou diretórios específicos do nó, como logs ou arquivos de configuração. No entanto, o HostPath deve ser usado com cuidado, pois pode levar a problemas de segurança e portabilidade, já que o conteúdo do HostPath é compartilhado entre os Pods que estão sendo executados no mesmo nó.
+
+O **HostPath** é um tipo de volume que monta um diretório do sistema de arquivos do nó onde o Pod está sendo executado.
+
+| Característica | Descrição |
+|----------------|-----------|
+| **Origem** | Sistema de arquivos do nó |
+| **Caso de uso** | Acessar logs, arquivos de configuração |
+| **⚠️ Cuidado** | Problemas de segurança e portabilidade |
+
+💡 **Atenção:** O conteúdo é compartilhado entre Pods no mesmo nó.
+
+---
 
 ### NFS (Network File System)
-O NFS (Network File System) é um tipo de volume que permite que os Pods acessem um sistema de arquivos compartilhado em uma rede. Ele é útil para casos em que vários Pods precisam acessar os mesmos dados, como em um cenário de cluster de banco de dados ou em um cenário de compartilhamento de arquivos. O NFS é um protocolo de rede que permite que os clientes acessem arquivos em um servidor remoto como se fossem arquivos locais, e o Kubernetes suporta o uso de volumes NFS para fornecer armazenamento persistente para os Pods.
 
-Utilizar um diretório NFS como volume no Kubernetes envolve os seguintes passos:
-# Instalar os utilitários de NFS
+O **NFS** é um tipo de volume que permite que os Pods acessem um sistema de arquivos compartilhado em uma rede.
+
+| Característica | Descrição |
+|----------------|-----------|
+| **Protocolo** | NFS (Network File System) |
+| **Acesso** | Múltiplos Pods podem acessar os mesmos dados |
+| **Caso de uso** | Clusters de banco de dados, compartilhamento de arquivos |
+
+#### Configuração do NFS
+
+**1. Instalar utilitários NFS (nos workers também):**
 ```bash
-sudo dnf install nfs-utils -y #instalar nos workers também
+sudo dnf install nfs-utils -y
+```
 
-sudo mkdir -p /mnt/nfs #Criar o ponto de montagem
+**2. Criar ponto de montagem:**
+```bash
+sudo mkdir -p /mnt/nfs
+```
 
-#Montar manualmente testar se a conexão está funcionando.
-mount -t nfs <IP_DO_SERVIDOR>:<CAMINHO_REMOTO> /mnt/nfs
-sudo mount -t nfs 192.168.1.100:/dados /mnt/nfs #exemplo
+**3. Montar manualmente para testar:**
+```bash
+# Sintaxe: mount -t nfs <IP_SERVIDOR>:<CAMINHO_REMOTO> <PONTO_LOCAL>
+sudo mount -t nfs 192.168.1.100:/dados /mnt/nfs
 df -h /mnt/nfs
+```
 
-#Configurar montagem automática (Persistência)
+**4. Configurar montagem automática (persistência):**
+```bash
 sudo nano /etc/fstab
-#Adicione a seguinte linha ao final do arquivo:
+# Adicionar linha:
 192.168.1.100:/dados    /mnt/nfs    nfs    defaults    0 0
+```
 
-
-# 192.168.1.100:/dados: O servidor e a pasta de origem.
-# /mnt/nfs: Onde será montado no seu Oracle Linux.
-# nfs: O tipo do sistema de arquivos.
-# defaults: Opções padrão de montagem.
-
-#Para testar se o fstab está correto sem precisar reiniciar, use:
+**5. Testar sem reiniciar:**
+```bash
 sudo mount -a
+```
 
+**6. Configurar servidor NFS:**
+```bash
 sudo systemctl enable --now nfs-server
 nano /etc/exports
 /mnt/nfs  *(rw,sync,no_root_squash,no_all_squash)
-
-sudo exportfs -ar #Recarrega as exportações NFS para aplicar as alterações feitas no arquivo /etc/exports.
+sudo exportfs -ar
 ```
 
+#### Criar PV com NFS no Kubernetes
 
 ```bash
 kubectl apply -f pv-nfs.yaml
 
 kubectl get pv
-NAME         CAPACITY   ACCESS MODES   RECLAIM POLICY   STATUS      CLAIM   STORAGECLASS   VOLUMEATTRIBUTESCLASS   REASON   AGE
-meu-pv       1Gi        RWO            Retain           Available           giropops       <unset>                          18m
-meu-pv-nfs   1Gi        RWO            Retain           Available           giropops       <unset>                          3s
+# NAME         CAPACITY   ACCESS MODES   RECLAIM POLICY   STATUS      CLAIM   STORAGECLASS   VOLUMEATTRIBUTESCLASS   REASON   AGE
+# meu-pv       1Gi        RWO            Retain           Available           giropops       <unset>                          18m
+# meu-pv-nfs   1Gi        RWO            Retain           Available           giropops       <unset>                          3s
 ```
 
+---
 
+### iSCSI
 
+O **iSCSI (Internet Small Computer Systems Interface)** é um protocolo de rede que permite que os clientes acessem dispositivos de armazenamento em um servidor remoto como se fossem dispositivos locais.
 
+| Característica | Descrição |
+|----------------|-----------|
+| **Protocolo** | iSCSI |
+| **Caso de uso** | Acessar dispositivos de armazenamento específicos |
+| **Aplicação** | Clusters de banco de dados, armazenamento de arquivos |
 
-### Iscsi (Internet Small Computer Systems Interface)
-O iSCSI (Internet Small Computer Systems Interface) é um protocolo de rede que permite que os clientes acessem dispositivos de armazenamento em um servidor remoto como se fossem dispositivos locais. O Kubernetes suporta o uso de volumes iSCSI para fornecer armazenamento persistente para os Pods. O iSCSI é útil para casos em que os Pods precisam acessar um dispositivo de armazenamento específico, como um disco rígido ou um array de armazenamento, e pode ser usado em cenários de cluster de banco deados de dados ou em cenários de armazenamento de arquivos.
+---
 
-### Nuvem PVs
-Além dos tipos de volumes mencionados acima, o Kubernetes também suporta o uso de volumes em nuvem, como os volumes do Amazon EBS (Elastic Block Store), Google Persistent Disks e Azure Disks. Esses volumes são provisionados dinamicamente e podem ser usados para fornecer armazenamento persistente para os Pods em ambientes de nuvem. Eles são úteis para casos em que os Pods precisam acessar um dispositivo de armazenamento específico em um ambiente de nuvem, e podem ser usados em cenários de cluster de banco de dados ou em cenários de armazenamento de arquivos.
+### Volumes em Nuvem
 
+O Kubernetes suporta volumes em nuvem para armazenamento persistente:
 
+| Provedor | Tipo de Volume |
+|----------|---------------|
+| **AWS** | EBS (Elastic Block Store) |
+| **GCP** | Google Persistent Disks |
+| **Azure** | Azure Disks |
 
+| Característica | Descrição |
+|----------------|-----------|
+| **Provisionamento** | Dinâmico |
+| **Caso de uso** | Ambientes de nuvem |
+| **Aplicação** | Clusters de banco de dados, armazenamento de arquivos |
 
+---
 
-## PVC (PersistentVolumeClaim)
-O PersistentVolumeClaim (PVC) é um recurso do Kubernetes que representa uma solicitação de armazenamento feita por um usuário. Ele é usado para solicitar acesso a um PersistentVolume (PV) específico ou a um tipo de armazenamento definido por uma StorageClass. O PVC especifica a quantidade de armazenamento necessária e as características desejadas, como o tipo de acesso (leitura/gravação) e acessibilidade (local ou remota). O Kubernetes tenta vincular o PVC a um PV que atenda aos requisitos especificados, e uma vez vinculado, o PVC pode ser usado por um Pod para acessar o armazenamento persistente.
+## PersistentVolumeClaim (PVC)
 
+### O que é
+
+O **PersistentVolumeClaim (PVC)** é uma solicitação de armazenamento feita por um usuário.
+
+| Componente | Descrição |
+|------------|-----------|
+| **Quantidade** | Tamanho de armazenamento necessário |
+| **Acesso** | Leitura/gravação (RWO, RWX, ROX) |
+| **StorageClass** | Tipo de armazenamento desejado |
+
+### Ciclo de Vida do PVC
+
+1. 📝 **Pending:** PVC criado, mas ainda não vinculado
+2. 🔗 **Bound:** PVC vinculado a um PV
+3. 🗑️ **Released:** PV liberado (dados podem permanecer)
+
+### Exemplo de Uso
 
 ```bash
+# Criar PVC
 k apply -f pvc.yaml
 
+# Ver status - deve estar Pending
 k get pvc
-NAME      STATUS    VOLUME   CAPACITY   ACCESS MODES   STORAGECLASS   VOLUMEATTRIBUTESCLASS   AGE
-meu-pvc   Pending                                      giropops       <unset>                 15s
+# NAME      STATUS    VOLUME   CAPACITY   ACCESS MODES   STORAGECLASS   VOLUMEATTRIBUTESCLASS   AGE
+# meu-pvc   Pending                                      giropops       <unset>                 15s
 
-#Esperando o primeiro consumidor
+# Criar Pod que consome o PVC (esperando primeiro consumidor)
 k apply -f pod.yaml
 
+# Verificar - agora deve estar Bound
 k get pvc
-NAME      STATUS   VOLUME       CAPACITY   ACCESS MODES   STORAGECLASS   VOLUMEATTRIBUTESCLASS   AGE
-meu-pvc   Bound    meu-pv-nfs   1Gi        RWO            giropops       <unset>                 5m54s
+# NAME      STATUS   VOLUME       CAPACITY   ACCESS MODES   STORAGECLASS   VOLUMEATTRIBUTESCLASS   AGE
+# meu-pvc   Bound    meu-pv-nfs   1Gi        RWO            giropops       <unset>                 5m54s
 ```
+
+💡 **Dica:** O PVC é vinculado automaticamente a um PV que atenda aos requisitos especificados.

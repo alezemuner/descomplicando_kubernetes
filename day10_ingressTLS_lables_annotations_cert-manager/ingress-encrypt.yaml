@@ -5,27 +5,26 @@ metadata:
   annotations: # Configura o rewrite da URL 
     nginx.ingress.kubernetes.io/limit-rps: "2" # Limita a 2 requisições por segundo
     nginx.ingress.kubernetes.io/rewrite-target: /
-
-    #AUTENTICAÇÃO BÁSICA COM SENHAS ARMAZENADAS EM UM SECRET
-    # nginx.ingress.kubernetes.io/auth-type: "basic"
-    # nginx.ingress.kubernetes.io/auth-secret: "giropops-senhas-users"
-    # nginx.ingress.kubernetes.io/auth-realm: "Autenticacao Necessaria"
+    cert-manager.io/cluster-issuer: "selfsigned-issuer" # em ambiente local, tive que usar um issuer autoassinado, pois o Let's Encrypt não emite certificados para domínios locais (localhost, 127.0.0.1)
+    #cert-manager.io/cluster-issuer: "letsencrypt-prod" # Anotação para o cert-manager usar o ClusterIssuer autoassinado
     
+    #AUTENTICAÇÃO BÁSICA COM SENHAS ARMAZENADAS EM UM SECRET
+    #nginx.ingress.kubernetes.io/auth-type: basic
+    #nginx.ingress.kubernetes.io/auth-secret: "giropops-senhas-users"
+    #nginx.ingress.kubernetes.io/auth-realm: "Autenticacao Necessaria"
+
     #Affinity (sessão com cookies)
-    # nginx.ingress.kubernetes.io/affinity: "cookie" # Habilita afinidade de sessão com cookies
-    # nginx.ingress.kubernetes.io/session-cookie-name: "giropops-cookie" # Nome do cookie de afinidade
-
+    #nginx.ingress.kubernetes.io/affinity: "cookie" # Habilita afinidade de sessão com cookies
+    #nginx.ingress.kubernetes.io/session-cookie-name: "giropops-cookie" # Nome do cookie de afinidade
+    
     #Affinity upstream hashing
-    # nginx.ingress.kubernetes.io/upstream-hash-by: "$request_uri" # Habilita hashing baseado na URI da requisição
-
-    cert-manager.io/cluster-issuer: "selfsigned-issuer" # Anotação para o cert-manager usar o ClusterIssuer autoassinado
-    #cert-manager.io/cluster-issuer: "letsencrypt-prod" # Anotação para o cert-manager usar o ClusterIssuer correto
+    #nginx.ingress.kubernetes.io/upstream-hash-by: "$request_uri" # Habilita hashing baseado na URI da requisição 
 spec:
   ingressClassName: nginx #inseri a classe do ingress, pois nao funcionou sem. 
   tls:
   - hosts:
     - giropops.nginx.io
-    secretName: giropops-senhas-tls # Nome do segredo TLS onde o certificado será armazenado
+    secretName: giropops-senhas-tls # Nome do secret TLS onde o certificado será armazenado
   rules:
   - host: giropops.nginx.io
     http:
