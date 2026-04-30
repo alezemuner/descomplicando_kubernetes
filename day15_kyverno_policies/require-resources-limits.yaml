@@ -3,20 +3,24 @@ kind: ClusterPolicy
 metadata:
   name: require-cpu-memory-limits
 spec:
-  validationFailureAction: Enforce
+  validationFailureAction: Enforce # quando quero que ele nao execute se não atender aos requisitos
   rules:
   - name: validate-limits
-    match:
+    match: 
       resources:
-        kinds:
+        kinds: # poderia colocar svc, deployments, etc
         - Pod
-    validate:
-      message: "CPU and memory limits are required"
+    # exclude:
+    #   resources:
+    #     namespaces:
+    #     - exemplo
+    validate: 
+      message: "Obrigatório definir recursos de CPU e Memória"
       pattern:
         spec:
           containers:
-          - name: "*"
+          - name: "*" # nome do container ou para todos com *
             resources:
               limits:
-                memory: "?*"
+                memory: "?*" 
                 cpu: "?*"

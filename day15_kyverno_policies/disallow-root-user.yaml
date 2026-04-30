@@ -5,13 +5,13 @@ metadata:
 spec:
   validationFailureAction: Enforce
   rules:
-  - name: check-runAsNonRoot
+  - name: nao-permitido-root
     match:
       resources:
         kinds:
         - Pod
     validate:
-      message: "Running as root is not allowed. Set runAsNonRoot to true."
+      message: "Não é permitido executar como root. Set runAsNonRoot to true."
       pattern:
         spec:
           containers:

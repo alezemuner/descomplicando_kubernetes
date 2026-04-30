@@ -4,7 +4,7 @@ metadata:
   name: add-label-namespace
 spec:
   rules:
-  - name: add-label-ns
+  - name: add-label-namespace
     match:
       resources:
         kinds:
@@ -13,4 +13,4 @@ spec:
       patchStrategicMerge:
         metadata:
           labels:
-            environment: production
+            ambiente: producao

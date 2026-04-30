@@ -13,7 +13,7 @@ spec:
     exclude:
       resources:
         namespaces:
-        - alexandre
+        - exemplo
     validate:
       message: "Running as root is not allowed. Set runAsNonRoot to true."
       pattern:

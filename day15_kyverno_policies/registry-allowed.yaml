@@ -1,7 +1,8 @@
 apiVersion: kyverno.io/v1
-kind: ClusterPolicy
+kind: Policy #apenas para o namespace
 metadata:
   name: ensure-images-from-trusted-repo
+  namespace: exemplo
 spec:
   validationFailureAction: Enforce
   rules:
@@ -11,9 +12,9 @@ spec:
         kinds:
         - Pod
     validate:
-      message: "Only images from trusted repositories are allowed"
+      message: "Somente imagens do repo da Chainguard."
       pattern:
         spec:
           containers:
           - name: "*"
-            image: "crg.dev/chainguard/*"
+            image: "cgr.dev/chainguard/*"

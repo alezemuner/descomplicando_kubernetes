@@ -12,7 +12,7 @@ spec:
       generate:
         apiVersion: v1
         kind: ConfigMap
-        name: default-configmap
+        name: configmap-padrao
         namespace: "{{request.object.metadata.name}}" # Gerar o ConfigMap no mesmo namespace do recurso que acionou a regra
         data:
           data:
