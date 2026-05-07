@@ -1,0 +1,40 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: giropops-senhas-deploy
+  namespace: giropops
+  labels:
+    app: giropops-senhas
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: giropops-senhas
+  template:
+    metadata:
+      labels:
+        app: giropops-senhas
+    spec:
+      containers:
+      - name: giropops-senhas
+        image: linuxtips/giropops-senhas:1.0
+        ports:
+        - containerPort: 5000
+        env:
+        - name: REDIS_HOST
+          value: "redis-svc" # O nome exato do seu Service do Redis
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: giropops-senhas-svc
+  namespace: giropops
+spec:
+  type: ClusterIP
+  selector:
+    app: giropops-senhas
+  ports:
+    - protocol: TCP
+      port: 5000
+      targetPort: 5000

@@ -9,19 +9,23 @@ spec:
   selector:
     matchLabels:
       app: nginx
-  strategy: {}
   template:
     metadata:
       labels:
         app: nginx
     spec:
       containers:
-      - image: nginx-gpu
-        name: nginx
+      - image: nginx
+        name: nginx-gpu
         ports:
         - containerPort: 80
       tolerations:
       - key: "gpu"
+        operator: "Equal"
+        value: "true"
+        effect: "NoSchedule"
+# necessário adcionar a toleration manutenção também 
+      - key: "manutencao"
         operator: "Equal"
         value: "true"
         effect: "NoSchedule"

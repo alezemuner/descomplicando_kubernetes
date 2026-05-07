@@ -1,0 +1,50 @@
+# 1. Bloqueio Padrão (Default Deny - Fecha todas as portas do namespace)
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: default-deny
+  namespace: giropops
+spec:
+  podSelector: {}
+  policyTypes:
+  - Ingress
+
+---
+# 2. Libera a Aplicação (Permite tráfego de qualquer lugar SOMENTE na porta 5000)
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: allow-app
+  namespace: giropops
+spec:
+  podSelector:
+    matchLabels:
+      app: giropops-senhas
+  policyTypes:
+  - Ingress
+  ingress:
+  - ports: # Omitir o bloco "from" libera o tráfego resolvendo o problema do SNAT do Nó
+    - protocol: TCP
+      port: 5000
+
+---
+# 3. Libera o Redis (Permite tráfego SOMENTE vindo dos pods da Aplicação na porta 6379)
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: allow-redis
+  namespace: giropops
+spec:
+  podSelector:
+    matchLabels:
+      app: redis
+  policyTypes:
+  - Ingress
+  ingress:
+  - from:
+    - podSelector:
+        matchLabels:
+          app: giropops-senhas
+    ports:
+    - protocol: TCP
+      port: 6379
